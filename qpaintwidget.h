@@ -22,12 +22,13 @@ protected:
     void paintEvent(QPaintEvent *);
 
 private:
+    void drawLine(QPainter *,QPoint, QPoint, QColor);
     void drawDDALine(QPainter *,QPoint, QPoint, QColor);
     void drawBrezenhamIntLine(QPainter *, QPoint, QPoint, QColor);
     void drawBrezenhamFloatLine(QPainter *, QPoint, QPoint, QColor);
     void drawBrezenhamSmoothLine(QPainter *, QPoint, QPoint, QColor);
     void drawQtLine(QPainter *, QPoint, QPoint, QColor);
-    void drawSpectr(QPainter *, QPoint, int, QColor);
+    void drawSpectr(QPainter *, int, QColor);
 
 
 

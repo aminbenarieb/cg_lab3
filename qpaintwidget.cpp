@@ -16,35 +16,40 @@ void QPaintWidget::paintEvent(QPaintEvent *) {
     QPainter ppainter(this);
     if (spectr)
     {
-        drawSpectr(&ppainter, p1, lineCount, color);
+        drawSpectr(&ppainter, lineCount, color);
     }
     else
     {
-        switch (method) {
-        case 0:
-            drawDDALine(&ppainter, p1, p2, color);
-            break;
-        case 1:
-            drawBrezenhamIntLine(&ppainter, p1, p2, color);
-            break;
-        case 2:
-            drawBrezenhamFloatLine(&ppainter, p1, p2, color);
-            break;
-        case 3:
-            drawBrezenhamSmoothLine(&ppainter, p1, p2, color);
-            break;
-        case 4:
-            drawQtLine(&ppainter, p1, p2, color);
-            break;
-        default:
-            break;
-        }
+        drawLine(&ppainter, p1, p2, color);
     }
 
 }
 
 
 // Algorithms with drawing
+
+void QPaintWidget::drawLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color)
+{
+    switch (method) {
+    case 0:
+        drawDDALine(ppainter, p1, p2, color);
+        break;
+    case 1:
+        drawBrezenhamIntLine(ppainter, p1, p2, color);
+        break;
+    case 2:
+        drawBrezenhamFloatLine(ppainter, p1, p2, color);
+        break;
+    case 3:
+        drawBrezenhamSmoothLine(ppainter, p1, p2, color);
+        break;
+    case 4:
+        drawQtLine(ppainter, p1, p2, color);
+        break;
+    default:
+        break;
+    }
+}
 
 void QPaintWidget::drawDDALine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
 
@@ -85,4 +90,20 @@ void QPaintWidget::drawQtLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor c
     ppainter->restore();
 
 }
-void QPaintWidget::drawSpectr(QPainter *ppainter, QPoint p1,  int lineCount, QColor color){}
+void QPaintWidget::drawSpectr(QPainter *ppainter, int lineCount, QColor color){
+
+    int x1 = this->width()/2;
+    int y1 = this->height()/2;
+
+    double angle = 360/lineCount;
+    double length = kmin(this->width(),this->height());
+
+    int x2, y2;
+    for (double phi = 0; phi < 360; phi += angle)
+    {
+        x2 = round(x1 + length * cos( kDegreeToRadian(phi) ) );
+        y2 = round(y1 + length * sin( kDegreeToRadian(phi) ) );
+        drawLine(ppainter, QPoint(x1,y1),QPoint(x2,y2), color);
+    }
+
+}
