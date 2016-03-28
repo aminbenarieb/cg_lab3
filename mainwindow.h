@@ -101,7 +101,8 @@ public slots:
     }
     void actionClearScreen()
     {
-
+        wgt->method = -1;
+        wgt->update();
     }
     void actionDrawLine()
     {
