@@ -28,6 +28,7 @@
 #define kPlaceHolderLineX2 "Координата X2"
 #define kPlaceHolderLineY2 "Координата Y2"
 
+#define kErrorMsgIncorrectData "Введите корректные данные!"
 
 #define kDrawPointRadius 3
 #define kDrawPenWidth 1
