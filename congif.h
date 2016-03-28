@@ -13,6 +13,12 @@
 #define kLabelSpectr "Спектр"
 #define kLabelLine "Прямая"
 
+#define kRadioTextDDA "ЦДА"
+#define kRadioTextFloatBr "Действительный Брезенхем"
+#define kRadioTextIntBr "Целочисленный Брезенхем"
+#define kRadioTextSmtBr "Сглаживание"
+#define kRadioTextQt "Qt"
+
 #define kPlaceHolderSpectrX "Координата X"
 #define kPlaceHolderSpectrY "Координата Y"
 #define kPlaceHolderSpectrLineCount "Количество лучей"

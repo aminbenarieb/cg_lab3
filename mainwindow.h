@@ -40,6 +40,14 @@ public:
         //*******************************
 
 
+        //***** Radio Buttons ******
+        radioBtnDDA->setText(kRadioTextDDA);
+        radioBtnIntBr->setText(kRadioTextIntBr);
+        radioBtnFloatBr->setText(kRadioTextFloatBr);
+        radioBtnSmtBr->setText(kRadioTextSmtBr);
+        radioBtnQt->setText(kRadioTextQt);
+        //*******************************
+
         //***** Labels Settings ******
         labelAlgorithm->setText(kLabelAlorithm);
         labelLine->setText(kLabelLine);
