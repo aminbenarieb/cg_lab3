@@ -11,6 +11,7 @@ class QPaintWidget : public QWidget
     Q_OBJECT
 public:
     QPaintWidget(QWidget * parent = 0);
+    bool performanceBar;
     bool spectr;
     int method;
     int lineCount;
@@ -29,6 +30,7 @@ private:
     void drawBrezenhamSmoothLine(QPainter *, QPoint, QPoint, QColor);
     void drawQtLine(QPainter *, QPoint, QPoint, QColor);
     void drawSpectr(QPainter *, int, QColor);
+    void drawPerfomanceBar(QPainter *);
 
 
 

@@ -14,7 +14,11 @@ void QPaintWidget::paintEvent(QPaintEvent *) {
 
 
     QPainter ppainter(this);
-    if (spectr)
+    if (performanceBar)
+    {
+        drawPerfomanceBar(&ppainter);
+    }
+    else if (spectr)
     {
         drawSpectr(&ppainter, lineCount, color);
     }
@@ -105,5 +109,9 @@ void QPaintWidget::drawSpectr(QPainter *ppainter, int lineCount, QColor color){
         y2 = round(y1 + length * sin( kDegreeToRadian(phi) ) );
         drawLine(ppainter, QPoint(x1,y1),QPoint(x2,y2), color);
     }
+
+}
+void QPaintWidget::drawPerfomanceBar(QPainter *)
+{
 
 }

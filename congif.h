@@ -5,6 +5,7 @@
 
 #define kBtnTextDrawLine "Нарисовать прямую"
 #define kBtnTextDrawSpectr "Нарисовать спектр"
+#define kBtnTextPerformance "Производительность"
 #define kBtnTextDrawClear "Отчистить"
 
 #define kTextTitle "Лабараторная работа 3"

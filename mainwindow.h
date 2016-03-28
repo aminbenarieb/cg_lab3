@@ -40,6 +40,7 @@ public:
         btnClear->setText(kBtnTextDrawClear);
         btnDrawLine->setText(kBtnTextDrawLine);
         btnDrawSpectr->setText(kBtnTextDrawSpectr);
+        btnPerformance->setText(kBtnTextPerformance);
         //*******************************
 
 
@@ -76,6 +77,7 @@ public:
         QObject::connect(btnClear, SIGNAL(clicked()), this, SLOT(actionClearScreen()) );
         QObject::connect(btnDrawSpectr, SIGNAL(clicked()), this, SLOT(actionDrawSpectr()) );
         QObject::connect(btnDrawLine, SIGNAL(clicked()), this, SLOT(actionDrawLine()) );
+        QObject::connect(btnPerformance, SIGNAL(clicked()), this, SLOT(actionPerformance()) );
         //*******************************
 
         QMenuBar mnuBar;
@@ -99,6 +101,7 @@ public slots:
     }
     void actionClearScreen()
     {
+        wgt->performanceBar = false;
         wgt->spectr = false;
         wgt->method = -1;
         wgt->update();
@@ -120,6 +123,7 @@ public slots:
             {
                 if (radioArray[i]->isChecked())
                 {
+                    wgt->performanceBar = false;
                     wgt->spectr = false;
                     wgt->method = i;
                     wgt->p1 = QPoint(x1, y1);
@@ -149,6 +153,7 @@ public slots:
             {
                 if (radioArray[i]->isChecked())
                 {
+                    wgt->performanceBar = false;
                     wgt->spectr = true;
                     wgt->method = i;
                     wgt->lineCount = lineCount;
@@ -162,6 +167,11 @@ public slots:
         {
             showMsg(kErrorMsgIncorrectData);
         }
+    }
+    void actionPerformance()
+    {
+        wgt->performanceBar = true;
+        wgt->update();
     }
 
 private:
