@@ -47,9 +47,9 @@ public:
         //*******************************
 
         //***** LineEdit Settings ******
-        lineEditX1->setPlaceholderText(kPlaceHolderSpectrX);
-        lineEditX1->setPlaceholderText(kPlaceHolderSpectrY);
-        lineEditX1->setPlaceholderText(kPlaceHolderSpectrLineCount);
+        lineEditSpectrX->setPlaceholderText(kPlaceHolderSpectrX);
+        lineEditSpectrY->setPlaceholderText(kPlaceHolderSpectrY);
+        lineEditLineCount->setPlaceholderText(kPlaceHolderSpectrLineCount);
 
         lineEditX1->setPlaceholderText(kPlaceHolderLineX1);
         lineEditY1->setPlaceholderText(kPlaceHolderLineY1);
