@@ -19,8 +19,6 @@
 #define kRadioTextSmtBr "Сглаживание"
 #define kRadioTextQt "Qt"
 
-#define kPlaceHolderSpectrX "Координата X"
-#define kPlaceHolderSpectrY "Координата Y"
 #define kPlaceHolderSpectrLineCount "Количество лучей"
 
 #define kPlaceHolderLineX1 "Координата X1"

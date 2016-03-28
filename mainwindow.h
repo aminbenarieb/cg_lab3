@@ -65,8 +65,6 @@ public:
         //*******************************
 
         //***** LineEdit Settings ******
-        lineEditSpectrX->setPlaceholderText(kPlaceHolderSpectrX);
-        lineEditSpectrY->setPlaceholderText(kPlaceHolderSpectrY);
         lineEditLineCount->setPlaceholderText(kPlaceHolderSpectrLineCount);
 
         lineEditX1->setPlaceholderText(kPlaceHolderLineX1);
@@ -140,14 +138,12 @@ public slots:
     }
     void actionDrawSpectr()
     {
-        int x, y, lineCount;
-        bool flagX, flagY, flagLineCount;
+        int lineCount;
+        bool flagLineCount;
 
-        x = lineEditSpectrX->text().toInt(&flagX);
-        y = lineEditSpectrY->text().toInt(&flagY);
         lineCount = lineEditLineCount->text().toInt(&flagLineCount);
 
-        if ( flagX && flagY && flagLineCount)
+        if ( flagLineCount)
         {
             for (int i = 0; i < radioArray.count(); i++)
             {
@@ -155,7 +151,6 @@ public slots:
                 {
                     wgt->spectr = true;
                     wgt->method = i;
-                    wgt->p1 = QPoint(x, y);
                     wgt->color = colours[i];
                     wgt->update();
                     break;

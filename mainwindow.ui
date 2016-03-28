@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>749</width>
-    <height>654</height>
+    <height>586</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -117,12 +117,6 @@
          <string>TextLabel</string>
         </property>
        </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEditSpectrX"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="lineEditSpectrY"/>
       </item>
       <item>
        <widget class="QLineEdit" name="lineEditLineCount"/>
