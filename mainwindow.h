@@ -110,6 +110,34 @@ public slots:
     void actionDrawLine()
     {
 
+        int x1, y1, x2, y2;
+        bool flagX1, flagX2, flagY1, flagY2;
+
+        x1 = lineEditX1->text().toInt(&flagX1);
+        x2 = lineEditX2->text().toInt(&flagX2);
+        y1 = lineEditY1->text().toInt(&flagY1);
+        y2 = lineEditY2->text().toInt(&flagY2);
+
+        if ( flagX1 && flagX2 && flagY1 && flagY2)
+        {
+            for (int i = 0; i < radioArray.count(); i++)
+            {
+                if (radioArray[i]->isChecked())
+                {
+                    wgt->method = i;
+                    wgt->p1 = QPoint(x1, y1);
+                    wgt->p2 = QPoint(x2, y2);
+                    wgt->color = colours[i];
+                    wgt->update();
+                    break;
+                }
+            }
+        }
+        else
+        {
+            showMsg(kErrorMsgIncorrectData);
+        }
+
     }
     void actionDrawSpectr()
     {
@@ -120,7 +148,7 @@ private:
     bool eventFilter(QObject *, QEvent *);
     void updateScreen()
     {
-
+        wgt->method = -1;
         wgt->update();
     }
     void showMsg(QString );
