@@ -151,6 +151,7 @@ public slots:
                 {
                     wgt->spectr = true;
                     wgt->method = i;
+                    wgt->lineCount = lineCount;
                     wgt->color = colours[i];
                     wgt->update();
                     break;
