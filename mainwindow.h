@@ -101,6 +101,7 @@ public slots:
     }
     void actionClearScreen()
     {
+        wgt->spectr = false;
         wgt->method = -1;
         wgt->update();
     }
@@ -121,6 +122,7 @@ public slots:
             {
                 if (radioArray[i]->isChecked())
                 {
+                    wgt->spectr = false;
                     wgt->method = i;
                     wgt->p1 = QPoint(x1, y1);
                     wgt->p2 = QPoint(x2, y2);
@@ -138,7 +140,32 @@ public slots:
     }
     void actionDrawSpectr()
     {
+        int x, y, lineCount;
+        bool flagX, flagY, flagLineCount;
 
+        x = lineEditSpectrX->text().toInt(&flagX);
+        y = lineEditSpectrY->text().toInt(&flagY);
+        lineCount = lineEditLineCount->text().toInt(&flagLineCount);
+
+        if ( flagX && flagY && flagLineCount)
+        {
+            for (int i = 0; i < radioArray.count(); i++)
+            {
+                if (radioArray[i]->isChecked())
+                {
+                    wgt->spectr = true;
+                    wgt->method = i;
+                    wgt->p1 = QPoint(x, y);
+                    wgt->color = colours[i];
+                    wgt->update();
+                    break;
+                }
+            }
+        }
+        else
+        {
+            showMsg(kErrorMsgIncorrectData);
+        }
     }
 
 private:
