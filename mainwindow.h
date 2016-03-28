@@ -22,11 +22,7 @@ public:
 
 
         //*****Setting Up******
-        colours[0] = QColor(5,5,5);
-        colours[1] = QColor(0,0,144);
-        colours[2] = QColor(144,0,0);
-        colours[3] = QColor(144,64,144);
-        colours[4] = QColor(0,144,0);
+        colours << QColor(5,5,5) << QColor(0,0,144) << QColor(144,0,0) << QColor(144,64,144) << QColor(0,144,0);
         setupUi(this);
         this->setWindowTitle(kTextTitle);
         //*******************************
@@ -53,12 +49,12 @@ public:
         radioBtnFloatBr->setText(kRadioTextFloatBr);
         radioBtnSmtBr->setText(kRadioTextSmtBr);
         radioBtnQt->setText(kRadioTextQt);
-        QRadioButton *btns[] = {radioBtnDDA, radioBtnIntBr, radioBtnFloatBr, radioBtnSmtBr, radioBtnQt};
-        for (int i = 0; i < 5; i++)
+        radioArray << radioBtnDDA << radioBtnIntBr << radioBtnFloatBr << radioBtnSmtBr << radioBtnQt;
+        for (int i = 0; i < radioArray.count(); i++)
         {
             QPalette* palette = new QPalette();
             palette->setColor(QPalette::Foreground,colours[i]);
-            btns[i]->setPalette(*palette);
+            radioArray[i]->setPalette(*palette);
         }
         //*******************************
 
@@ -128,7 +124,8 @@ private:
         wgt->update();
     }
     void showMsg(QString );
-    QColor colours[5];
+    QVector <QColor> colours;
+    QVector <QRadioButton*> radioArray;
 
 protected:
     void showEvent(QShowEvent *e){
