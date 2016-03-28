@@ -20,9 +20,16 @@ public:
 
     MainWindow(QMainWindow* pwgt = 0) : QMainWindow(pwgt) {
 
-        setupUi(this);
 
+        //*****Setting Up******
+        colours[0] = QColor(5,5,5);
+        colours[1] = QColor(0,0,144);
+        colours[2] = QColor(144,0,0);
+        colours[3] = QColor(144,64,144);
+        colours[4] = QColor(0,144,0);
+        setupUi(this);
         this->setWindowTitle(kTextTitle);
+        //*******************************
 
         //***** QPaintWidget Settings ******
         wgt->setMouseTracking(true);
@@ -46,6 +53,13 @@ public:
         radioBtnFloatBr->setText(kRadioTextFloatBr);
         radioBtnSmtBr->setText(kRadioTextSmtBr);
         radioBtnQt->setText(kRadioTextQt);
+        QRadioButton *btns[] = {radioBtnDDA, radioBtnIntBr, radioBtnFloatBr, radioBtnSmtBr, radioBtnQt};
+        for (int i = 0; i < 5; i++)
+        {
+            QPalette* palette = new QPalette();
+            palette->setColor(QPalette::Foreground,colours[i]);
+            btns[i]->setPalette(*palette);
+        }
         //*******************************
 
         //***** Labels Settings ******
@@ -114,6 +128,7 @@ private:
         wgt->update();
     }
     void showMsg(QString );
+    QColor colours[5];
 
 protected:
     void showEvent(QShowEvent *e){
