@@ -96,10 +96,6 @@ public:
     }
 
 public slots:
-    void actionSetUp()
-    {
-        updateScreen();
-    }
     void actionQuit(){
         QApplication::quit();
     }
@@ -146,23 +142,9 @@ public slots:
 
 private:
     bool eventFilter(QObject *, QEvent *);
-    void updateScreen()
-    {
-        wgt->method = -1;
-        wgt->update();
-    }
     void showMsg(QString );
     QVector <QColor> colours;
     QVector <QRadioButton*> radioArray;
-
-protected:
-    void showEvent(QShowEvent *e){
-        QWidget::showEvent(e);
-        QCoreApplication::processEvents();
-
-        actionSetUp();
-    }
-
 
 };
 
