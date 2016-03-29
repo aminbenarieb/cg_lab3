@@ -111,7 +111,39 @@ void QPaintWidget::drawSpectr(QPainter *ppainter, int lineCount, QColor color){
     }
 
 }
-void QPaintWidget::drawPerfomanceBar(QPainter *)
+void QPaintWidget::drawPerfomanceBar(QPainter *ppainter)
 {
+    QVector <int> times;
+    for (int i = 0; i < 5; i++)
+    {
+        method = i;
+        double time = 0;
+        for (int i=0; i<100; i++)
+        {
+            double st = tick();
+            drawLine(ppainter, QPoint(-100,-100), QPoint(0,0), Qt::transparent);
+            double et = tick();
+            time += et-st;
+        }
+        times.append( time / 100 );
+    }
 
+    double k = ((double)this->height()-100) / *std::max_element(times.begin(), times.end());
+    int xStep = this->width() / (5*4);
+    int x = xStep;
+    QString algNames[] = {kRadioTextDDA, kRadioTextIntBr, kRadioTextFloatBr, kRadioTextSmtBr, kRadioTextQt};
+    ppainter->save();
+    ppainter->setBrush(Qt::blue);
+    QFont font = ppainter->font();
+    font.setPointSize(8);
+    ppainter->setFont(font);
+    for (int i = 0; i < 5; i++)
+    {
+        qDebug()<<times[i]<<" * "<<k<<" = "<<times[i]*k;
+        ppainter->drawRect(x, this->height()-times[i]*k, xStep * 2, times[i] * k);
+        ppainter->drawText(QPoint(x, this->height() - times[i]*k - 20), QString::number(times[i]) );
+        ppainter->drawText(QRect(x, this->height() - times[i]*k - 50, 3*xStep, 40), algNames[i]);
+        x += (xStep * 4);
+    }
+    ppainter->restore();
 }

@@ -37,4 +37,10 @@
 #define kRadianToDegree(radian) ( radian*180/M_PI )
 #define kDegreeToRadian(degree) ( degree*M_PI/180 )
 
+inline unsigned long long tick(void){
+    unsigned long long d;
+    __asm__ __volatile__ ("rdtsc": "=A" (d) );
+
+    return d;
+}
 #endif // CONGIF_H
