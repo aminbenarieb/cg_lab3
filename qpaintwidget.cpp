@@ -83,7 +83,57 @@ void QPaintWidget::drawDDALine(QPainter *ppainter, QPoint p1, QPoint p2, QColor 
      ppainter->restore();
 
 }
-void QPaintWidget::drawBrezenhamIntLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){}
+void QPaintWidget::drawBrezenhamIntLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
+
+    // Input data
+    int x1 = p1.x();
+    int y1 = p1.y();
+    int x2 = p2.x();
+    int y2 = p2.y();
+
+    // Intermediate calculation
+    double x = x1, y = y1;
+    int dx = abs(x2-x1);
+    int dy = abs(y2-y1);
+
+    int sx = dx > 0 ? 1 : -1;     // positive of negative
+    int sy = dx > 0 ? 1 : -1;
+    dx = abs(dx);
+    dx = abs(dy);
+
+    bool ob = false;        //error?
+    if (dx <= dy)
+    {
+        ob = true;
+        kSwap(dx, dy);
+    }
+
+    int m = 2 * dy;         //?
+    int e = m - dx;         //?
+
+    ppainter->save();
+    ppainter->setPen(QPen(color, kDrawPenWidth));
+    for (int i = 0; i < dx; i++)
+    {
+        ppainter->drawPoint(QPoint(x, y));
+        if (e >= 0)
+        {
+            if (!ob)
+                y += sy;
+            else
+                x += sx;
+            e -= 2 * dx;
+        }
+        if (!ob)
+            x += sx;
+        else
+            y += sy;
+        //e += m;
+        e += 2 * dy;
+    }
+    ppainter->restore();
+
+}
 void QPaintWidget::drawBrezenhamFloatLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){}
 void QPaintWidget::drawBrezenhamSmoothLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){}
 void QPaintWidget::drawQtLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
