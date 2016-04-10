@@ -34,7 +34,7 @@
 
 #define kmin(a, b) ( ( a < b) ? a : b )
 #define kmax(a, b) ( ( a > b) ? a : b )
-#define ksign(a) ( ( a >= 0) ? 1 : -1 )
+#define ksign(a) ( ( a > 0) ? 1 : ( ( a < 0) ? -1 : 0) )
 #define kRadianToDegree(radian) ( radian*180/M_PI )
 #define kDegreeToRadian(degree) ( degree*M_PI/180 )
 
