@@ -14,18 +14,26 @@ void QPaintWidget::paintEvent(QPaintEvent *) {
 
 
     QPainter ppainter(this);
-    if (performanceBar)
-    {
+
+    switch (state) {
+    case PerfomanceBarState:
         drawPerfomanceBar(&ppainter);
-    }
-    else if (spectr)
-    {
+        break;
+    case SpectrState:
         drawSpectr(&ppainter, lineCount, color);
+        break;
+    case LineState:
+        foreach (QLineInfo lineInfo, lineInfoStack)
+        {
+            method = lineInfo.method;
+            drawLine(&ppainter, lineInfo.p1, lineInfo.p2, lineInfo.color);
+        }
+        break;
+     default:
+        break;
     }
-    else
-    {
-        drawLine(&ppainter, p1, p2, color);
-    }
+
+
 
 }
 
@@ -63,24 +71,34 @@ void QPaintWidget::drawDDALine(QPainter *ppainter, QPoint p1, QPoint p2, QColor 
     int x2 = p2.x();
     int y2 = p2.y();
 
-    // Intermediate calculation
-    double x = x1, y = y1;
-    int dx = abs(x2-x1);
-    int dy = abs(y2-y1);
-    int l = dx > dy ? dx : dy;
-    dx /= l;
-    dy /= l;
-
     // Output drawing
     ppainter->save();
     ppainter->setPen(QPen(color, kDrawPenWidth));
-    for (int i = 0; i < l; i++)
+
+    // если отрезок вырожденный, то отрисовываем только одну точку
+    if (x2 == x1 && y2 == y1)
     {
-       ppainter->drawPoint(round(x), round(y));
-       x += dx;
-       y += dy;
+        //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+        if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+           ppainter->drawPoint(x1, y1);
     }
-     ppainter->restore();
+    else
+    {
+        double xt=(double)x1, yt=(double)y1; //текущие координаты
+        double dx=x2-x1, dy=y2-y1; //приращение координат
+        int l= kmax( fabs(dx), fabs(dy)); //количество "итераций"
+        dx /= l; dy /= l;
+        for (int i=1; i<=l+1; i++)
+        {
+            //обрабатываем ТОЛЬКО пиксели внутри видимой обласи
+            if (!((xt >= this->width()) || (xt < 0) || (yt >= this->height()) || (yt < 0)))
+                ppainter->drawPoint((int)(xt+0.5), (int)(yt+0.5));
+            xt += dx; yt += dy;
+        }
+    }
+
+    ppainter->restore();
+
 
 }
 void QPaintWidget::drawBrezenhamIntLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
@@ -91,51 +109,219 @@ void QPaintWidget::drawBrezenhamIntLine(QPainter *ppainter, QPoint p1, QPoint p2
     int x2 = p2.x();
     int y2 = p2.y();
 
-    // Intermediate calculation
-    double x = x1, y = y1;
-    int dx = abs(x2-x1);
-    int dy = abs(y2-y1);
-
-    int sx = dx > 0 ? 1 : -1;     // positive of negative
-    int sy = dx > 0 ? 1 : -1;
-    dx = abs(dx);
-    dx = abs(dy);
-
-    bool ob = false;        //error?
-    if (dx <= dy)
-    {
-        ob = true;
-        kSwap(dx, dy);
-    }
-
-    int m = 2 * dy;         //?
-    int e = m - dx;         //?
 
     ppainter->save();
     ppainter->setPen(QPen(color, kDrawPenWidth));
-    for (int i = 0; i < dx; i++)
+    if (x2 == x1 && y2 == y1)
     {
-        ppainter->drawPoint(QPoint(x, y));
-        if (e >= 0)
-        {
-            if (!ob)
-                y += sy;
-            else
-                x += sx;
-            e -= 2 * dx;
-        }
-        if (!ob)
-            x += sx;
+        //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+        if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+             ppainter->drawPoint(x1, y1);
+    }
+    else
+    {
+        int dx=x2-x1, dy=y2-y1; //приращение координат
+        int sx = ksign(dx), sy = ksign(dy); //шаг по X и по Y
+        dx = abs(dx); dy = abs(dy); //абсолютируем приращения
+
+        bool swap; //флаг обмена
+        if (dy <= dx)
+            swap = false;
         else
-            y += sy;
-        //e += m;
-        e += 2 * dy;
+        {
+            swap = true;
+            int t = dx;
+            dx = dy;
+            dy = t;
+        }
+
+        int _E = 2*dy - dx; //ошибка
+        int xt=x1, yt=y1; //текущие координаты
+
+        //в цикле анализируем ошибку
+        for (int i=1; i<=dx+1; i++)
+        {
+            //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+            if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+            {
+                ppainter->drawPoint(xt, yt);
+            }
+
+            if (_E>=0)
+            {
+                if (swap)
+                    xt += sx;
+                else
+                {
+                    yt += sy;
+                }
+                _E = _E - 2*dx;
+            }
+            if (_E<0)
+            {
+                if (swap)
+                    yt += sy;
+                else
+                {
+                    xt += sx;
+                }
+            }
+            _E = _E + 2*dy;
+        }
     }
     ppainter->restore();
 
 }
-void QPaintWidget::drawBrezenhamFloatLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){}
-void QPaintWidget::drawBrezenhamSmoothLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){}
+void QPaintWidget::drawBrezenhamFloatLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
+
+    // Input data
+    int x1 = p1.x();
+    int y1 = p1.y();
+    int x2 = p2.x();
+    int y2 = p2.y();
+
+
+    ppainter->save();
+    ppainter->setPen(QPen(color, kDrawPenWidth));
+    if (x2 == x1 && y2 == y1)
+    {
+        //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+        if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+             ppainter->drawPoint(x1, y1);
+    }
+    else
+    {
+        int dx=x2-x1, dy=y2-y1; //приращение координат
+        int sx = ksign(dx), sy = ksign(dy); //шаг по X и по Y
+        dx = abs(dx); dy = abs(dy); //абсолютируем приращения
+        double m = (double)dy/dx; //тангенс угла наклона //(дабл) ОБЯЗАТЕЛЕН!! иначе он расценит (инт)ду/(инт)дх =0 при ду<дх!!
+
+        bool swap; //флаг обмена
+        if (m <= 1)
+            swap = false;
+        else
+        {
+            swap = true;
+            int t = dx;
+            dx = dy;
+            dy = t;
+            m = 1/m;
+        }
+
+        double e = m-0.5; //ошибка
+        int xt=x1, yt=y1; //текущие координаты
+
+        //в цикле анализируем ошибку
+        for (int i=1; i<=dx+1; i++)
+        {
+            //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+            if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+                ppainter->drawPoint(xt, yt);
+
+            if (e>=0)
+            {
+                if (swap)
+                    xt += sx;
+                else
+                {
+                    yt += sy;
+                }
+                e = e-1;
+            }
+            if (e<0)
+            {
+                if (swap)
+                    yt += sy;
+                else
+                {
+                    xt += sx;
+                }
+            }
+            e = e+m;
+
+        }
+    }
+    ppainter->restore();
+
+}
+void QPaintWidget::drawBrezenhamSmoothLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
+
+    // Input data
+    int x1 = p1.x();
+    int y1 = p1.y();
+    int x2 = p2.x();
+    int y2 = p2.y();
+
+
+    ppainter->save();
+    if (x2 == x1 && y2 == y1)
+    {
+        //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+        if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+             ppainter->drawPoint(x1, y1);
+    }
+    else
+    {
+        int dx=x2-x1, dy=y2-y1; //приращение координат
+        int sx = ksign(dx), sy = ksign(dy); //шаг по X и по Y
+        dx = abs(dx); dy = abs(dy); //абсолютируем приращения
+
+        double m = (double)dy/dx; //тангенс угла наклона
+        bool swap; //флаг обмена
+        if (m <= 1)
+            swap = false;
+        else
+        {
+            swap = true;
+            int t = dx;
+            dx = dy;
+            dy = t;
+            m = 1/m;
+        }
+#define I 256 //количество уровней интенсивности
+        double e = I/2; //ошибка
+        int xt=x1, yt=y1; //текущие координаты
+        m *= I; //корректируем тангенс
+        double W = I - m; //коэффициент
+
+        //в цикле анализируем ошибку
+        for (int i=1; i<=dx; i++)
+        {
+            int r,g,b; //ргб-составляющие цвета для закраски
+            double C = e/I;
+            //if (C>0.5) C = 0.5; //корректируем "прозрачность", чтобы перекрашиваться не в абсолютный ноль, а просто в бледный цвет
+            r = color.red() + C*(255 - color.red());
+            g = color.green() + C*(255 - color.green());
+            b = color.blue() + C*(255 - color.blue());
+            QColor drawcolor = QColor( 255,r,g,b );
+            ppainter->setPen(QPen(drawcolor, kDrawPenWidth));
+            //обрабатываем ТОЛЬКО пиксели внутри массива битмапа
+            if (!((x1 >= this->width()) || (x1 < 0) || (y1 >= this->height()) || (y1 < 0)))
+            {
+                ppainter->drawPoint(xt, yt);
+            }
+
+            if (e <= W)
+            {
+                if (swap)
+                    yt += sy;
+                else
+                {
+                    xt += sx;
+                }
+                e = e+m;
+            }
+            else
+            {
+                xt += sx;
+                yt += sy;
+                e = e-W;
+            }
+        }
+    }
+    ppainter->restore();
+
+}
 void QPaintWidget::drawQtLine(QPainter *ppainter, QPoint p1, QPoint p2, QColor color){
 
     ppainter->save();

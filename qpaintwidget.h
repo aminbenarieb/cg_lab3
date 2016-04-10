@@ -4,20 +4,35 @@
 #include <QWidget>
 #include <QVarLengthArray>
 
+struct QLineInfo
+{
+    QPoint p1;
+    QPoint p2;
+    QColor color;
+    int method;
+};
 
+enum QPaintState
+{
+    PerfomanceBarState,
+    SpectrState,
+    LineState,
+    CleanState
+};
 
 class QPaintWidget : public QWidget
 {
     Q_OBJECT
 public:
-    QPaintWidget(QWidget * parent = 0);
-    bool performanceBar;
-    bool spectr;
+    QPaintWidget(QWidget * parent = 0); 
     int method;
     int lineCount;
     QPoint p1;
     QPoint p2;
     QColor color;
+    QPaintState state;
+    QVector <QLineInfo> lineInfoStack;
+
 
 protected:
     void paintEvent(QPaintEvent *);

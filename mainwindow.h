@@ -101,9 +101,8 @@ public slots:
     }
     void actionClearScreen()
     {
-        wgt->performanceBar = false;
-        wgt->spectr = false;
-        wgt->method = -1;
+        wgt->state = CleanState;
+        wgt->lineInfoStack.clear();
         wgt->update();
     }
     void actionDrawLine()
@@ -123,12 +122,8 @@ public slots:
             {
                 if (radioArray[i]->isChecked())
                 {
-                    wgt->performanceBar = false;
-                    wgt->spectr = false;
-                    wgt->method = i;
-                    wgt->p1 = QPoint(x1, y1);
-                    wgt->p2 = QPoint(x2, y2);
-                    wgt->color = colours[i];
+                    wgt->state = LineState;
+                    wgt->lineInfoStack.append( (QLineInfo){QPoint(x1, y1),QPoint(x2, y2),colours[i],i} );
                     wgt->update();
                     break;
                 }
@@ -153,8 +148,8 @@ public slots:
             {
                 if (radioArray[i]->isChecked())
                 {
-                    wgt->performanceBar = false;
-                    wgt->spectr = true;
+                    wgt->state = SpectrState;
+                    wgt->lineInfoStack.clear();
                     wgt->method = i;
                     wgt->lineCount = lineCount;
                     wgt->color = colours[i];
@@ -170,7 +165,8 @@ public slots:
     }
     void actionPerformance()
     {
-        wgt->performanceBar = true;
+        wgt->state = PerfomanceBarState;
+        wgt->lineInfoStack.clear();
         wgt->update();
     }
 
