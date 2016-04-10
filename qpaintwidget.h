@@ -14,10 +14,10 @@ struct QLineInfo
 
 enum QPaintState
 {
+    CleanState,
     PerfomanceBarState,
     SpectrState,
-    LineState,
-    CleanState
+    LineState
 };
 
 class QPaintWidget : public QWidget
