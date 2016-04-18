@@ -12,6 +12,13 @@ struct QLineInfo
     int method;
 };
 
+struct QSpectrInfo
+{
+    int method;
+    int lineCount;
+    QColor color;
+};
+
 enum QPaintState
 {
     CleanState,
@@ -26,12 +33,9 @@ class QPaintWidget : public QWidget
 public:
     QPaintWidget(QWidget * parent = 0); 
     int method;
-    int lineCount;
-    QPoint p1;
-    QPoint p2;
-    QColor color;
     QPaintState state;
     QVector <QLineInfo> lineInfoStack;
+    QVector <QSpectrInfo> spectrInfoStack;
 
 
 protected:

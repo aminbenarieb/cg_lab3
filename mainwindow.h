@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QDebug>
+#include <QColorDialog>
 
 #include "ui_mainwindow.h"
 #include "qpaintwidget.h"
@@ -22,7 +23,6 @@ public:
 
 
         //*****Setting Up******
-        colours << QColor(5,5,5) << QColor(0,0,144) << QColor(144,0,0) << QColor(144,64,144) << QColor(0,144,0);
         setupUi(this);
         this->setWindowTitle(kTextTitle);
         //*******************************
@@ -51,12 +51,6 @@ public:
         radioBtnSmtBr->setText(kRadioTextSmtBr);
         radioBtnQt->setText(kRadioTextQt);
         radioArray << radioBtnDDA << radioBtnIntBr << radioBtnFloatBr << radioBtnSmtBr << radioBtnQt;
-        for (int i = 0; i < radioArray.count(); i++)
-        {
-            QPalette* palette = new QPalette();
-            palette->setColor(QPalette::Foreground,colours[i]);
-            radioArray[i]->setPalette(*palette);
-        }
         //*******************************
 
         //***** Labels Settings ******
@@ -78,7 +72,28 @@ public:
         QObject::connect(btnDrawSpectr, SIGNAL(clicked()), this, SLOT(actionDrawSpectr()) );
         QObject::connect(btnDrawLine, SIGNAL(clicked()), this, SLOT(actionDrawLine()) );
         QObject::connect(btnPerformance, SIGNAL(clicked()), this, SLOT(actionPerformance()) );
+        QObject::connect(pushButtonLineColor, SIGNAL(clicked()), this, SLOT(actionLineColorChange()) );
+        QObject::connect(pushButtonBackgrounColor, SIGNAL(clicked()), this, SLOT(actionBackgroundColorChange()) );
         //*******************************
+
+
+        /* Default Color */
+
+        pushButtonLineColor->setStyleSheet(QString("border-radius: 28px;"
+                                                        "font-family: Arial;"
+                                                        "color:white;"
+                                                        "font-size: 20px;"
+                                                        "padding: 10px 20px 10px 20px;"
+                                                        "text-decoration: none;"
+                                                    "background-color:black"));
+       pushButtonBackgrounColor->setStyleSheet(QString("border-radius: 28px;"
+                                                        "font-family: Arial;"
+                                                        "font-size: 20px;"
+                                                        "padding: 10px 20px 10px 20px;"
+                                                        "text-decoration: none;"
+                                                    "background-color:white"));
+
+        /***/
 
         QMenuBar mnuBar;
 
@@ -103,6 +118,7 @@ public slots:
     {
         wgt->state = CleanState;
         wgt->lineInfoStack.clear();
+        wgt->spectrInfoStack.clear();
         wgt->update();
     }
     void actionDrawLine()
@@ -123,7 +139,8 @@ public slots:
                 if (radioArray[i]->isChecked())
                 {
                     wgt->state = LineState;
-                    wgt->lineInfoStack.append( (QLineInfo){QPoint(x1, y1),QPoint(x2, y2),colours[i],i} );
+                    wgt->spectrInfoStack.clear();
+                    wgt->lineInfoStack.append( (QLineInfo){QPoint(x1, y1),QPoint(x2, y2),lineColor,i} );
                     wgt->update();
                     break;
                 }
@@ -150,9 +167,7 @@ public slots:
                 {
                     wgt->state = SpectrState;
                     wgt->lineInfoStack.clear();
-                    wgt->method = i;
-                    wgt->lineCount = lineCount;
-                    wgt->color = colours[i];
+                    wgt->spectrInfoStack.append( (QSpectrInfo){i, lineCount, lineColor } );
                     wgt->update();
                     break;
                 }
@@ -167,13 +182,57 @@ public slots:
     {
         wgt->state = PerfomanceBarState;
         wgt->lineInfoStack.clear();
+        wgt->spectrInfoStack.clear();
         wgt->update();
+    }
+    void actionLineColorChange()
+    {
+
+        QColor color;
+        if (false)
+            color = QColorDialog::getColor(Qt::green, this);
+        else
+            color = QColorDialog::getColor(Qt::green, this, "Select Color", QColorDialog::DontUseNativeDialog);
+
+        if (color.isValid())
+        {
+            lineColor = color;
+            pushButtonLineColor->setStyleSheet(QString("border-radius: 28px;"
+                                                       "font-family: Arial;"
+                                                       "font-size: 20px;"
+                                                       "padding: 10px 20px 10px 20px;"
+                                                       "text-decoration: none;"
+                                                       "background-color:%1").arg(color.name()));
+        }
+
+    }
+    void actionBackgroundColorChange()
+    {
+
+        QColor color;
+        if (false)
+            color = QColorDialog::getColor(Qt::green, this);
+        else
+            color = QColorDialog::getColor(Qt::green, this, "Select Color", QColorDialog::DontUseNativeDialog);
+
+        if (color.isValid())
+        {
+            wgt->setPalette(QPalette(color));
+            wgt->setAutoFillBackground(true);
+
+            pushButtonBackgrounColor->setStyleSheet(QString("border-radius: 28px;"
+                                                            "font-family: Arial;"
+                                                            "font-size: 20px;"
+                                                            "padding: 10px 20px 10px 20px;"
+                                                            "text-decoration: none;"
+                                                        "background-color:%1").arg(color.name()));
+        }
     }
 
 private:
     bool eventFilter(QObject *, QEvent *);
     void showMsg(QString );
-    QVector <QColor> colours;
+    QColor lineColor;
     QVector <QRadioButton*> radioArray;
 
 };

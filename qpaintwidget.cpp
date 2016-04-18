@@ -20,7 +20,11 @@ void QPaintWidget::paintEvent(QPaintEvent *) {
         drawPerfomanceBar(&ppainter);
         break;
     case SpectrState:
-        drawSpectr(&ppainter, lineCount, color);
+        foreach (QSpectrInfo spectrInfo, spectrInfoStack)
+        {
+            method = spectrInfo.method;
+            drawSpectr(&ppainter, spectrInfo.lineCount, spectrInfo.color);
+        }
         break;
     case LineState:
         foreach (QLineInfo lineInfo, lineInfoStack)
@@ -84,8 +88,8 @@ void QPaintWidget::drawDDALine(QPainter *ppainter, QPoint p1, QPoint p2, QColor 
     else
     {
         // current coordinates
-        double xt = (double) x1,
-               yt = (double) y1,
+        double xt = x1,
+               yt =  y1,
         // x & y length
                dx = x2 - x1,
                dy = y2 - y1;
